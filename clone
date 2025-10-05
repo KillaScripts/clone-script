@@ -1,36 +1,34 @@
--- Player Clone Script
+-- Astral Projection & Player Mimic Script
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
 
 -- Create GUI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "PlayerCloneGUI"
+screenGui.Name = "AstralProjectionGUI"
 screenGui.ResetOnSpawn = false
 
 -- Main frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 320, 0, 400)
+mainFrame.Size = UDim2.new(0, 350, 0, 450)
 mainFrame.Position = UDim2.new(0, 100, 0, 100)
-mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 mainFrame.BorderSizePixel = 0
-mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 120)
 mainFrame.Active = true
 mainFrame.Draggable = true
 mainFrame.Parent = screenGui
 
--- Corner radius for modern look
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 8)
 corner.Parent = mainFrame
 
 -- Title bar
 local titleBar = Instance.new("Frame")
-titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.Size = UDim2.new(1, 0, 0, 40)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 
@@ -43,7 +41,7 @@ title.Size = UDim2.new(0.7, 0, 1, 0)
 title.Position = UDim2.new(0.05, 0, 0, 0)
 title.BackgroundTransparency = 1
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Text = "Player Clone GUI"
+title.Text = "🌌 Astral Projection"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 16
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -52,7 +50,7 @@ title.Parent = titleBar
 -- Minimize button
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Size = UDim2.new(0, 25, 0, 25)
-minimizeButton.Position = UDim2.new(0.85, 0, 0.15, 0)
+minimizeButton.Position = UDim2.new(0.85, 0, 0.2, 0)
 minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
 minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimizeButton.Text = "-"
@@ -64,56 +62,66 @@ local minCorner = Instance.new("UICorner")
 minCorner.CornerRadius = UDim.new(0, 4)
 minCorner.Parent = minimizeButton
 
--- Content frame (will be hidden when minimized)
+-- Content frame
 local contentFrame = Instance.new("Frame")
-contentFrame.Size = UDim2.new(1, 0, 1, -35)
-contentFrame.Position = UDim2.new(0, 0, 0, 35)
+contentFrame.Size = UDim2.new(1, 0, 1, -40)
+contentFrame.Position = UDim2.new(0, 0, 0, 40)
 contentFrame.BackgroundTransparency = 1
 contentFrame.Parent = mainFrame
 
--- Clone Me Button
-local cloneButton = Instance.new("TextButton")
-cloneButton.Size = UDim2.new(0.9, 0, 0, 45)
-cloneButton.Position = UDim2.new(0.05, 0, 0.05, 0)
-cloneButton.BackgroundColor3 = Color3.fromRGB(80, 120, 220)
-cloneButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-cloneButton.Text = "🔄 CLONE ME"
-cloneButton.Font = Enum.Font.GothamBold
-cloneButton.TextSize = 14
-cloneButton.Parent = contentFrame
+-- Astral Projection Section
+local astralLabel = Instance.new("TextLabel")
+astralLabel.Size = UDim2.new(0.9, 0, 0, 25)
+astralLabel.Position = UDim2.new(0.05, 0, 0.02, 0)
+astralLabel.BackgroundTransparency = 1
+astralLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+astralLabel.Text = "ASTRAL PROJECTION:"
+astralLabel.Font = Enum.Font.GothamBold
+astralLabel.TextSize = 14
+astralLabel.TextXAlignment = Enum.TextXAlignment.Left
+astralLabel.Parent = contentFrame
 
-local cloneCorner = Instance.new("UICorner")
-cloneCorner.CornerRadius = UDim.new(0, 6)
-cloneCorner.Parent = cloneButton
+local projectButton = Instance.new("TextButton")
+projectButton.Size = UDim2.new(0.9, 0, 0, 45)
+projectButton.Position = UDim2.new(0.05, 0, 0.08, 0)
+projectButton.BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+projectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+projectButton.Text = "🚀 PROJECT ASTRAL BODY"
+projectButton.Font = Enum.Font.GothamBold
+projectButton.TextSize = 14
+projectButton.Parent = contentFrame
 
--- Delete Clones Button
-local deleteClonesButton = Instance.new("TextButton")
-deleteClonesButton.Size = UDim2.new(0.9, 0, 0, 35)
-deleteClonesButton.Position = UDim2.new(0.05, 0, 0.17, 0)
-deleteClonesButton.BackgroundColor3 = Color3.fromRGB(220, 80, 80)
-deleteClonesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-deleteClonesButton.Text = "🗑️ DELETE ALL CLONES"
-deleteClonesButton.Font = Enum.Font.GothamBold
-deleteClonesButton.TextSize = 12
-deleteClonesButton.Parent = contentFrame
+local projectCorner = Instance.new("UICorner")
+projectCorner.CornerRadius = UDim.new(0, 6)
+projectCorner.Parent = projectButton
 
-local deleteCorner = Instance.new("UICorner")
-deleteCorner.CornerRadius = UDim.new(0, 6)
-deleteCorner.Parent = deleteClonesButton
+local unprojectButton = Instance.new("TextButton")
+unprojectButton.Size = UDim2.new(0.9, 0, 0, 35)
+unprojectButton.Position = UDim2.new(0.05, 0, 0.18, 0)
+unprojectButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
+unprojectButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+unprojectButton.Text = "🔙 RETURN TO BODY"
+unprojectButton.Font = Enum.Font.GothamBold
+unprojectButton.TextSize = 12
+unprojectButton.Parent = contentFrame
 
--- Copy Player Section
-local copyLabel = Instance.new("TextLabel")
-copyLabel.Size = UDim2.new(0.9, 0, 0, 20)
-copyLabel.Position = UDim2.new(0.05, 0, 0.3, 0)
-copyLabel.BackgroundTransparency = 1
-copyLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-copyLabel.Text = "COPY PLAYER APPEARANCE:"
-copyLabel.Font = Enum.Font.Gotham
-copyLabel.TextSize = 12
-copyLabel.TextXAlignment = Enum.TextXAlignment.Left
-copyLabel.Parent = contentFrame
+local unprojectCorner = Instance.new("UICorner")
+unprojectCorner.CornerRadius = UDim.new(0, 6)
+unprojectCorner.Parent = unprojectButton
 
--- Improved dropdown container
+-- Player Mimic Section
+local mimicLabel = Instance.new("TextLabel")
+mimicLabel.Size = UDim2.new(0.9, 0, 0, 25)
+mimicLabel.Position = UDim2.new(0.05, 0, 0.3, 0)
+mimicLabel.BackgroundTransparency = 1
+mimicLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+mimicLabel.Text = "PLAYER MIMICRY:"
+mimicLabel.Font = Enum.Font.GothamBold
+mimicLabel.TextSize = 14
+mimicLabel.TextXAlignment = Enum.TextXAlignment.Left
+mimicLabel.Parent = contentFrame
+
+-- Dropdown container
 local dropdownContainer = Instance.new("Frame")
 dropdownContainer.Size = UDim2.new(0.9, 0, 0, 35)
 dropdownContainer.Position = UDim2.new(0.05, 0, 0.37, 0)
@@ -133,16 +141,15 @@ dropCorner.Parent = playerDropdown
 local dropdownButton = Instance.new("TextButton")
 dropdownButton.Size = UDim2.new(1, 0, 1, 0)
 dropdownButton.BackgroundTransparency = 1
-dropdownButton.Text = "👤 Select Player"
+dropdownButton.Text = "👤 Select Player to Mimic"
 dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 dropdownButton.Font = Enum.Font.Gotham
 dropdownButton.TextSize = 12
 dropdownButton.Parent = playerDropdown
 
--- Fixed dropdown frame (positioned above to avoid covering other elements)
 local dropdownFrame = Instance.new("ScrollingFrame")
 dropdownFrame.Size = UDim2.new(1, 0, 0, 120)
-dropdownFrame.Position = UDim2.new(0, 0, 0, -125) -- Positioned above the dropdown
+dropdownFrame.Position = UDim2.new(0, 0, 0, -125)
 dropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
 dropdownFrame.BorderSizePixel = 0
 dropdownFrame.Visible = false
@@ -159,24 +166,38 @@ local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.Padding = UDim.new(0, 2)
 UIListLayout.Parent = dropdownFrame
 
-local copyButton = Instance.new("TextButton")
-copyButton.Size = UDim2.new(0.9, 0, 0, 45)
-copyButton.Position = UDim2.new(0.05, 0, 0.52, 0)
-copyButton.BackgroundColor3 = Color3.fromRGB(220, 100, 80)
-copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-copyButton.Text = "🎭 COPY SELECTED PLAYER"
-copyButton.Font = Enum.Font.GothamBold
-copyButton.TextSize = 14
-copyButton.Parent = contentFrame
+local mimicButton = Instance.new("TextButton")
+mimicButton.Size = UDim2.new(0.9, 0, 0, 45)
+mimicButton.Position = UDim2.new(0.05, 0, 0.52, 0)
+mimicButton.BackgroundColor3 = Color3.fromRGB(255, 170, 80)
+mimicButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+mimicButton.Text = "🎭 MIMIC SELECTED PLAYER"
+mimicButton.Font = Enum.Font.GothamBold
+mimicButton.TextSize = 14
+mimicButton.Parent = contentFrame
 
-local copyCorner = Instance.new("UICorner")
-copyCorner.CornerRadius = UDim.new(0, 6)
-copyCorner.Parent = copyButton
+local mimicCorner = Instance.new("UICorner")
+mimicCorner.CornerRadius = UDim.new(0, 6)
+mimicCorner.Parent = mimicButton
+
+local unmimicButton = Instance.new("TextButton")
+unmimicButton.Size = UDim2.new(0.9, 0, 0, 35)
+unmimicButton.Position = UDim2.new(0.05, 0, 0.62, 0)
+unmimicButton.BackgroundColor3 = Color3.fromRGB(100, 100, 120)
+unmimicButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+unmimicButton.Text = "👤 RETURN TO SELF"
+unmimicButton.Font = Enum.Font.GothamBold
+unmimicButton.TextSize = 12
+unmimicButton.Parent = contentFrame
+
+local unmimicCorner = Instance.new("UICorner")
+unmimicCorner.CornerRadius = UDim.new(0, 6)
+unmimicCorner.Parent = unmimicButton
 
 -- Status label
 local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(0.9, 0, 0, 70)
-statusLabel.Position = UDim2.new(0.05, 0, 0.68, 0)
+statusLabel.Size = UDim2.new(0.9, 0, 0, 80)
+statusLabel.Position = UDim2.new(0.05, 0, 0.75, 0)
 statusLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
 statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 statusLabel.Text = "Status: Ready\nSelect an option above"
@@ -192,7 +213,7 @@ statusCorner.Parent = statusLabel
 -- Close button
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0.9, 0, 0, 35)
-closeButton.Position = UDim2.new(0.05, 0, 0.88, 0)
+closeButton.Position = UDim2.new(0.05, 0, 0.92, 0)
 closeButton.BackgroundColor3 = Color3.fromRGB(120, 40, 40)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Text = "❌ CLOSE GUI"
@@ -209,164 +230,253 @@ screenGui.Parent = game:GetService("CoreGui") or game.Players.LocalPlayer:WaitFo
 
 -- Variables
 local localPlayer = game.Players.LocalPlayer
-local clonedCharacters = {}
 local selectedPlayer = nil
 local isMinimized = false
 
--- Function to create character clone (IMPROVED - better replication)
-local function createCharacterClone(targetPlayer, isLocalPlayer)
-    if not targetPlayer.Character then
-        return nil
-    end
+-- Astral Projection Variables
+local isAstral = false
+local originalBody = nil
+local astralBody = nil
+local skeletonAdornment = nil
+
+-- Player Mimic Variables
+local isMimicking = false
+local originalName = localPlayer.Name
+local originalDisplayName = localPlayer.DisplayName
+
+-- Function to create skeleton overlay
+local function createSkeletonOverlay(character)
+    if not character then return nil end
     
-    local originalChar = targetPlayer.Character
-    local humanoidRootPart = originalChar:FindFirstChild("HumanoidRootPart")
+    local skeleton = Instance.new("Model")
+    skeleton.Name = "AstralSkeleton"
     
-    if not humanoidRootPart then
-        return nil
-    end
-    
-    -- Create the clone model
-    local clone = Instance.new("Model")
-    clone.Name = "PlayerClone_" .. tick() -- Unique name
-    
-    -- Get spawn position (slightly offset and dropped in place)
-    local spawnCFrame = humanoidRootPart.CFrame * CFrame.new(math.random(-3, 3), 0, math.random(-3, 3))
-    
-    -- Copy humanoid
-    local originalHumanoid = originalChar:FindFirstChildOfClass("Humanoid")
-    if originalHumanoid then
-        local humanoidClone = Instance.new("Humanoid")
-        humanoidClone.HealthDisplayType = Enum.HealthDisplayType.AlwaysOff
-        humanoidClone.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
-        
-        -- Copy humanoid properties
-        humanoidClone.WalkSpeed = 0
-        humanoidClone.JumpPower = 0
-        humanoidClone.MaxHealth = originalHumanoid.MaxHealth
-        humanoidClone.Health = originalHumanoid.Health
-        humanoidClone.Parent = clone
-        
-        -- Copy animations if they exist
-        if originalHumanoid.Animator then
-            local animator = Instance.new("Animator")
-            animator.Parent = humanoidClone
-        end
-    end
-    
-    -- Copy all parts with proper replication
-    for _, part in ipairs(originalChar:GetChildren()) do
+    for _, part in ipairs(character:GetChildren()) do
         if part:IsA("BasePart") then
-            local partClone = part:Clone()
+            local skeletonPart = Instance.new("Part")
+            skeletonPart.Name = part.Name
+            skeletonPart.Size = part.Size
+            skeletonPart.CFrame = part.CFrame
+            skeletonPart.Anchored = true
+            skeletonPart.CanCollide = false
+            skeletonPart.Material = Enum.Material.Neon
+            skeletonPart.BrickColor = BrickColor.new("Cyan")
+            skeletonPart.Transparency = 0.3
+            skeletonPart.Parent = skeleton
             
-            -- Make parts non-collidable but NOT anchored (better replication)
-            partClone.CanCollide = false
-            partClone.Anchored = false
+            -- Add wireframe effect
+            local surfaceGui = Instance.new("SurfaceGui")
+            surfaceGui.Face = Enum.NormalId.Front
+            surfaceGui.AlwaysOnTop = true
+            surfaceGui.Parent = skeletonPart
             
-            -- Set position
-            if part.Name == "HumanoidRootPart" then
-                partClone.CFrame = spawnCFrame
-                partClone.Velocity = Vector3.new(0, 0, 0)
-                partClone.RotVelocity = Vector3.new(0, 0, 0)
-            else
-                local relativeCFrame = originalChar:GetPrimaryPartCFrame():ToObjectSpace(part.CFrame)
-                partClone.CFrame = spawnCFrame:ToWorldSpace(relativeCFrame)
-            end
-            
-            partClone.Parent = clone
-            
-            -- Add BodyVelocity to keep in place without anchoring
-            local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            bodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
-            bodyVelocity.P = 1000
-            bodyVelocity.Parent = partClone
-            
-            -- Add BodyGyro to maintain rotation
-            local bodyGyro = Instance.new("BodyGyro")
-            bodyGyro.MaxTorque = Vector3.new(40000, 40000, 40000)
-            bodyGyro.P = 1000
-            bodyGyro.CFrame = partClone.CFrame
-            bodyGyro.Parent = partClone
-        elseif part:IsA("Accoutrement") or part:IsA("CharacterMesh") or part:IsA("Clothing") then
-            local partClone = part:Clone()
-            partClone.Parent = clone
+            local frame = Instance.new("Frame")
+            frame.Size = UDim2.new(1, 0, 1, 0)
+            frame.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+            frame.BackgroundTransparency = 0.7
+            frame.BorderSizePixel = 0
+            frame.Parent = surfaceGui
         end
     end
     
-    -- Set primary part
-    local cloneRoot = clone:FindFirstChild("HumanoidRootPart")
-    if cloneRoot then
-        clone.PrimaryPart = cloneRoot
-        
-        -- Force network ownership to server for better replication
-        spawn(function()
-            wait(0.1)
-            if cloneRoot and cloneRoot:IsDescendantOf(workspace) then
-                cloneRoot:SetNetworkOwner(nil)
-            end
-        end)
-    end
-    
-    -- Parent to workspace so everyone can see it
-    clone.Parent = workspace
-    
-    -- Force replication by changing properties
-    spawn(function()
-        wait(0.2)
-        if cloneRoot then
-            cloneRoot.Transparency = 0
-        end
-    end)
-    
-    table.insert(clonedCharacters, {
-        Model = clone,
-        CreatedAt = tick()
-    })
-    
-    -- Clean up after 10 minutes to prevent lag
-    delay(600, function()
-        if clone and clone.Parent then
-            clone:Destroy()
-        end
-    end)
-    
-    return clone
+    return skeleton
 end
 
--- Function to delete all clones
-local function deleteAllClones()
-    local deletedCount = 0
-    for i, cloneData in ipairs(clonedCharacters) do
-        if cloneData.Model and cloneData.Model.Parent then
-            cloneData.Model:Destroy()
-            deletedCount = deletedCount + 1
-        end
-    end
-    clonedCharacters = {}
+-- Function to project astral body
+local function projectAstralBody()
+    if isAstral then return false end
     
-    -- Also clean up any remaining clones in workspace
-    for _, obj in ipairs(workspace:GetChildren()) do
-        if obj:IsA("Model") and obj.Name:find("PlayerClone_") then
-            obj:Destroy()
-            deletedCount = deletedCount + 1
-        end
+    local character = localPlayer.Character
+    if not character then
+        statusLabel.Text = "❌ No character found"
+        return false
     end
     
-    return deletedCount
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoid or not rootPart then
+        statusLabel.Text = "❌ Character not fully loaded"
+        return false
+    end
+    
+    -- Store original body
+    originalBody = character
+    
+    -- Create astral body (invisible copy)
+    local astral = character:Clone()
+    astral.Name = "AstralProjection"
+    
+    -- Make astral body invisible to others but visible to self
+    for _, part in ipairs(astral:GetChildren()) do
+        if part:IsA("BasePart") then
+            part.Transparency = 1  -- Invisible to others
+            part.CanCollide = false
+        end
+    end
+    
+    -- Position astral body at current location
+    astral:PivotTo(rootPart.CFrame)
+    astral.Parent = workspace
+    
+    -- Create skeleton overlay for client visibility
+    skeletonAdornment = createSkeletonOverlay(astral)
+    if skeletonAdornment then
+        skeletonAdornment.Parent = astral
+    end
+    
+    -- Make original body appear AFK (disable movements)
+    humanoid.WalkSpeed = 0
+    humanoid.JumpPower = 0
+    
+    -- Set up astral body as the active character
+    localPlayer.Character = astral
+    isAstral = true
+    astralBody = astral
+    
+    -- Force camera to follow astral body
+    workspace.CurrentCamera.CameraSubject = astral:FindFirstChildOfClass("Humanoid")
+    
+    statusLabel.Text = "✅ Astral projection active!\n• Your body appears AFK to others\n• You can move freely in astral form\n• Skeleton visible only to you\n• You can be hit in astral form"
+    
+    return true
+end
+
+-- Function to return to original body
+local function returnToBody()
+    if not isAstral or not originalBody then return false end
+    
+    -- Return to original body
+    localPlayer.Character = originalBody
+    
+    -- Restore original body movements
+    local humanoid = originalBody:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.WalkSpeed = 16
+        humanoid.JumpPower = 50
+    end
+    
+    -- Clean up astral body
+    if astralBody then
+        astralBody:Destroy()
+        astralBody = nil
+    end
+    
+    if skeletonAdornment then
+        skeletonAdornment:Destroy()
+        skeletonAdornment = nil
+    end
+    
+    isAstral = false
+    originalBody = nil
+    
+    statusLabel.Text = "✅ Returned to original body!\nAll functions restored to normal"
+    
+    return true
+end
+
+-- Function to mimic player
+local function mimicPlayer(targetPlayer)
+    if not targetPlayer or targetPlayer == localPlayer then
+        statusLabel.Text = "❌ Cannot mimic yourself or invalid player"
+        return false
+    end
+    
+    -- Store original identity
+    if not isMimicking then
+        originalName = localPlayer.Name
+        originalDisplayName = localPlayer.DisplayName
+    end
+    
+    -- Change player name (this is client-side only due to Roblox restrictions)
+    localPlayer.DisplayName = targetPlayer.DisplayName
+    
+    -- Change character appearance as much as possible
+    local targetChar = targetPlayer.Character
+    local localChar = localPlayer.Character
+    
+    if targetChar and localChar then
+        -- Copy body colors
+        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+        local localHumanoid = localChar:FindFirstChildOfClass("Humanoid")
+        
+        if targetHumanoid and localHumanoid then
+            -- Copy body colors
+            if targetHumanoid:FindFirstChild("BodyColors") then
+                local targetColors = targetHumanoid.BodyColors
+                local newColors = targetColors:Clone()
+                
+                if localHumanoid:FindFirstChild("BodyColors") then
+                    localHumanoid.BodyColors:Destroy()
+                end
+                newColors.Parent = localHumanoid
+            end
+            
+            -- Copy scale if available
+            if targetHumanoid:FindFirstChild("BodyHeightScale") then
+                local scale = targetHumanoid.BodyHeightScale:Clone()
+                if localHumanoid:FindFirstChild("BodyHeightScale") then
+                    localHumanoid.BodyHeightScale:Destroy()
+                end
+                scale.Parent = localHumanoid
+            end
+        end
+        
+        -- Copy accessories and clothing
+        for _, item in ipairs(localChar:GetChildren()) do
+            if item:IsA("Accoutrement") or item:IsA("Clothing") then
+                item:Destroy()
+            end
+        end
+        
+        for _, item in ipairs(targetChar:GetChildren()) do
+            if item:IsA("Accoutrement") or item:IsA("Clothing") then
+                local clone = item:Clone()
+                clone.Parent = localChar
+            end
+        end
+    end
+    
+    isMimicking = true
+    
+    statusLabel.Text = "✅ Now mimicking: " .. targetPlayer.Name .. "\n• Display name changed\n• Appearance copied\n• Others see you as " .. targetPlayer.DisplayName
+    
+    return true
+end
+
+-- Function to stop mimicking
+local function stopMimicking()
+    if not isMimicking then return false end
+    
+    -- Restore original identity
+    localPlayer.DisplayName = originalDisplayName
+    
+    -- Reset character appearance
+    local character = localPlayer.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            -- Trigger respawn to reset appearance completely
+            humanoid.Health = 0
+        end
+    end
+    
+    isMimicking = false
+    
+    statusLabel.Text = "✅ Stopped mimicking!\nReturned to your original identity"
+    
+    return true
 end
 
 -- Function to update players list
 local function updatePlayersList()
-    -- Clear existing buttons
     for _, child in ipairs(dropdownFrame:GetChildren()) do
         if child:IsA("TextButton") then
             child:Destroy()
         end
     end
     
-    -- Add players to dropdown
-    for i, player in ipairs(game.Players:GetPlayers()) do
+    for _, player in ipairs(game.Players:GetPlayers()) do
         if player ~= localPlayer then
             local playerButton = Instance.new("TextButton")
             playerButton.Size = UDim2.new(1, 0, 0, 30)
@@ -386,106 +496,45 @@ local function updatePlayersList()
                 selectedPlayer = player
                 dropdownButton.Text = "👤 " .. player.Name
                 dropdownFrame.Visible = false
-                statusLabel.Text = "Selected: " .. player.Name .. "\nReady to copy appearance!"
+                statusLabel.Text = "Selected: " .. player.Name .. "\nReady to mimic this player!"
             end)
         end
     end
     
-    -- Update dropdown text if no players available
     if #game.Players:GetPlayers() <= 1 then
         dropdownButton.Text = "👤 No other players"
         selectedPlayer = nil
     end
 end
 
--- Function to copy player appearance (SERVER-SIDE VISIBLE)
-local function copyPlayerAppearance(targetPlayer)
-    if not targetPlayer or not targetPlayer.Character or not localPlayer.Character then
-        statusLabel.Text = "Error: Characters not loaded"
-        return false
-    end
-    
-    local targetChar = targetPlayer.Character
-    local localChar = localPlayer.Character
-    
-    -- Wait for characters to fully load
-    if not targetChar:FindFirstChild("Humanoid") or not localChar:FindFirstChild("Humanoid") then
-        statusLabel.Text = "Error: Characters not fully loaded"
-        return false
-    end
-    
-    -- Use a remote event for better server-side replication
-    local success = pcall(function()
-        -- Remove existing clothing/accessories from local character
-        for _, item in ipairs(localChar:GetChildren()) do
-            if item:IsA("Accoutrement") or item:IsA("Clothing") or item:IsA("CharacterMesh") then
-                item:Destroy()
-            end
-        end
-        
-        -- Copy appearance items from target player
-        for _, item in ipairs(targetChar:GetChildren()) do
-            if item:IsA("Accoutrement") or item:IsA("Clothing") or item:IsA("CharacterMesh") then
-                local clone = item:Clone()
-                clone.Parent = localChar
-            end
-        end
-        
-        -- Copy body colors
-        local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
-        local localHumanoid = localChar:FindFirstChildOfClass("Humanoid")
-        
-        if targetHumanoid and localHumanoid and targetHumanoid:FindFirstChild("BodyColors") then
-            local targetColors = targetHumanoid.BodyColors
-            local newColors = targetColors:Clone()
-            
-            -- Remove existing body colors
-            if localHumanoid:FindFirstChild("BodyColors") then
-                localHumanoid.BodyColors:Destroy()
-            end
-            
-            newColors.Parent = localHumanoid
-        end
-    end)
-    
-    return success
-end
-
 -- Toggle minimize function
 local function toggleMinimize()
     if isMinimized then
-        -- Restore
         contentFrame.Visible = true
-        mainFrame.Size = UDim2.new(0, 320, 0, 400)
+        mainFrame.Size = UDim2.new(0, 350, 0, 450)
         minimizeButton.Text = "-"
         isMinimized = false
     else
-        -- Minimize
         contentFrame.Visible = false
-        mainFrame.Size = UDim2.new(0, 320, 0, 35)
+        mainFrame.Size = UDim2.new(0, 350, 0, 40)
         minimizeButton.Text = "+"
         isMinimized = true
     end
 end
 
 -- Connect events
-cloneButton.MouseButton1Click:Connect(function()
-    if localPlayer.Character then
-        local clone = createCharacterClone(localPlayer, true)
-        if clone then
-            local pos = clone:GetPivot().Position
-            statusLabel.Text = "✅ Clone created!\nPosition: " .. math.floor(pos.X) .. ", " .. math.floor(pos.Y) .. ", " .. math.floor(pos.Z) .. "\nEveryone can see it!\nTotal clones: " .. #clonedCharacters
-        else
-            statusLabel.Text = "❌ Failed to create clone\nMake sure your character is loaded"
-        end
-    else
-        statusLabel.Text = "❌ Error: Your character not loaded"
+projectButton.MouseButton1Click:Connect(function()
+    if projectAstralBody() then
+        projectButton.BackgroundColor3 = Color3.fromRGB(60, 140, 220)
+        unprojectButton.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
     end
 end)
 
-deleteClonesButton.MouseButton1Click:Connect(function()
-    local deletedCount = deleteAllClones()
-    statusLabel.Text = "🗑️ Deleted " .. deletedCount .. " clones\nAll clones removed from server!"
+unprojectButton.MouseButton1Click:Connect(function()
+    if returnToBody() then
+        projectButton.BackgroundColor3 = Color3.fromRGB(80, 160, 255)
+        unprojectButton.BackgroundColor3 = Color3.fromRGB(180, 80, 80)
+    end
 end)
 
 dropdownButton.MouseButton1Click:Connect(function()
@@ -493,22 +542,34 @@ dropdownButton.MouseButton1Click:Connect(function()
     dropdownFrame.Visible = not dropdownFrame.Visible
 end)
 
-copyButton.MouseButton1Click:Connect(function()
+mimicButton.MouseButton1Click:Connect(function()
     if selectedPlayer then
-        local success = copyPlayerAppearance(selectedPlayer)
-        if success then
-            statusLabel.Text = "✅ Copied appearance of: " .. selectedPlayer.Name .. "\nChanges should be server-side visible!\nOther players should see you as " .. selectedPlayer.Name
-        else
-            statusLabel.Text = "❌ Failed to copy appearance\nTry again or select another player"
+        if mimicPlayer(selectedPlayer) then
+            mimicButton.BackgroundColor3 = Color3.fromRGB(220, 150, 60)
+            unmimicButton.BackgroundColor3 = Color3.fromRGB(100, 100, 120)
         end
     else
-        statusLabel.Text = "⚠️ Please select a player first\nClick the dropdown above"
+        statusLabel.Text = "⚠️ Please select a player first!"
+    end
+end)
+
+unmimicButton.MouseButton1Click:Connect(function()
+    if stopMimicking() then
+        mimicButton.BackgroundColor3 = Color3.fromRGB(255, 170, 80)
+        unmimicButton.BackgroundColor3 = Color3.fromRGB(80, 80, 100)
     end
 end)
 
 minimizeButton.MouseButton1Click:Connect(toggleMinimize)
 
 closeButton.MouseButton1Click:Connect(function()
+    -- Clean up before closing
+    if isAstral then
+        returnToBody()
+    end
+    if isMimicking then
+        stopMimicking()
+    end
     screenGui:Destroy()
 end)
 
@@ -525,15 +586,29 @@ end)
 game.Players.PlayerAdded:Connect(updatePlayersList)
 game.Players.PlayerRemoving:Connect(updatePlayersList)
 
+-- Handle character respawns
+localPlayer.CharacterAdded:Connect(function(character)
+    if isAstral then
+        wait(1) -- Wait for character to load
+        returnToBody()
+    end
+    if isMimicking then
+        wait(1)
+        -- Re-apply mimic after respawn
+        if selectedPlayer then
+            mimicPlayer(selectedPlayer)
+        end
+    end
+end)
+
 -- Initial update
 updatePlayersList()
 
-statusLabel.Text = "✅ GUI Loaded!\n• Clone Me: Creates server-side clone\n• Delete Clones: Removes all clones\n• Copy Player: Copies appearance"
+statusLabel.Text = "✅ Astral Projection GUI Loaded!\n• PROJECT: Leave your body behind\n• MIMIC: Copy another player's identity\n• Works in most games"
 
-print("🎮 Player Clone GUI loaded successfully!")
+print("🌌 Astral Projection GUI loaded successfully!")
 print("✨ Features:")
-print("   • CLONE ME: Creates server-side visible clones")
-print("   • DELETE CLONES: Removes all created clones")
-print("   • COPY PLAYER: Copies player appearance")
-print("   • Fixed dropdown menu")
-print("   • Works in most Roblox games")
+print("   • Astral Projection: Leave body behind while moving freely")
+print("   • Player Mimicry: Copy names and appearances")
+print("   • Skeleton overlay for astral form")
+print("   • Compatible with most Roblox games")
