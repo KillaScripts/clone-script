@@ -1,0 +1,462 @@
+-- Player Clone Script
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+-- Create GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "PlayerCloneGUI"
+screenGui.ResetOnSpawn = false
+
+-- Main frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 320, 0, 350)
+mainFrame.Position = UDim2.new(0, 100, 0, 100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+mainFrame.BorderSizePixel = 0
+mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 120)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Corner radius for modern look
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
+
+-- Title bar
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = titleBar
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0.7, 0, 1, 0)
+title.Position = UDim2.new(0.05, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Text = "Player Clone GUI"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
+
+-- Minimize button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 25, 0, 25)
+minimizeButton.Position = UDim2.new(0.85, 0, 0.15, 0)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 16
+minimizeButton.Parent = titleBar
+
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 4)
+minCorner.Parent = minimizeButton
+
+-- Content frame (will be hidden when minimized)
+local contentFrame = Instance.new("Frame")
+contentFrame.Size = UDim2.new(1, 0, 1, -35)
+contentFrame.Position = UDim2.new(0, 0, 0, 35)
+contentFrame.BackgroundTransparency = 1
+contentFrame.Parent = mainFrame
+
+-- Clone Me Button
+local cloneButton = Instance.new("TextButton")
+cloneButton.Size = UDim2.new(0.9, 0, 0, 45)
+cloneButton.Position = UDim2.new(0.05, 0, 0.05, 0)
+cloneButton.BackgroundColor3 = Color3.fromRGB(80, 120, 220)
+cloneButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+cloneButton.Text = "🔄 CLONE ME"
+cloneButton.Font = Enum.Font.GothamBold
+cloneButton.TextSize = 14
+cloneButton.Parent = contentFrame
+
+local cloneCorner = Instance.new("UICorner")
+cloneCorner.CornerRadius = UDim.new(0, 6)
+cloneCorner.Parent = cloneButton
+
+-- Copy Player Section
+local copyLabel = Instance.new("TextLabel")
+copyLabel.Size = UDim2.new(0.9, 0, 0, 20)
+copyLabel.Position = UDim2.new(0.05, 0, 0.25, 0)
+copyLabel.BackgroundTransparency = 1
+copyLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+copyLabel.Text = "COPY PLAYER APPEARANCE:"
+copyLabel.Font = Enum.Font.Gotham
+copyLabel.TextSize = 12
+copyLabel.TextXAlignment = Enum.TextXAlignment.Left
+copyLabel.Parent = contentFrame
+
+local playerDropdown = Instance.new("Frame")
+playerDropdown.Size = UDim2.new(0.9, 0, 0, 35)
+playerDropdown.Position = UDim2.new(0.05, 0, 0.32, 0)
+playerDropdown.BackgroundColor3 = Color3.fromRGB(50, 50, 65)
+playerDropdown.BorderSizePixel = 0
+playerDropdown.Parent = contentFrame
+
+local dropCorner = Instance.new("UICorner")
+dropCorner.CornerRadius = UDim.new(0, 6)
+dropCorner.Parent = playerDropdown
+
+local dropdownButton = Instance.new("TextButton")
+dropdownButton.Size = UDim2.new(1, 0, 1, 0)
+dropdownButton.BackgroundTransparency = 1
+dropdownButton.Text = "👤 Select Player"
+dropdownButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+dropdownButton.Font = Enum.Font.Gotham
+dropdownButton.TextSize = 12
+dropdownButton.Parent = playerDropdown
+
+local dropdownFrame = Instance.new("ScrollingFrame")
+dropdownFrame.Size = UDim2.new(1, 0, 0, 150)
+dropdownFrame.Position = UDim2.new(0, 0, 1, 5)
+dropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 55)
+dropdownFrame.BorderSizePixel = 0
+dropdownFrame.Visible = false
+dropdownFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+dropdownFrame.ScrollBarThickness = 4
+dropdownFrame.Parent = playerDropdown
+
+local dropFrameCorner = Instance.new("UICorner")
+dropFrameCorner.CornerRadius = UDim.new(0, 6)
+dropFrameCorner.Parent = dropdownFrame
+
+local copyButton = Instance.new("TextButton")
+copyButton.Size = UDim2.new(0.9, 0, 0, 45)
+copyButton.Position = UDim2.new(0.05, 0, 0.45, 0)
+copyButton.BackgroundColor3 = Color3.fromRGB(220, 100, 80)
+copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyButton.Text = "🎭 COPY SELECTED PLAYER"
+copyButton.Font = Enum.Font.GothamBold
+copyButton.TextSize = 14
+copyButton.Parent = contentFrame
+
+local copyCorner = Instance.new("UICorner")
+copyCorner.CornerRadius = UDim.new(0, 6)
+copyCorner.Parent = copyButton
+
+-- Status label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(0.9, 0, 0, 70)
+statusLabel.Position = UDim2.new(0.05, 0, 0.65, 0)
+statusLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+statusLabel.Text = "Status: Ready\nSelect an option above"
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 12
+statusLabel.TextWrapped = true
+statusLabel.Parent = contentFrame
+
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 6)
+statusCorner.Parent = statusLabel
+
+-- Close button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0.9, 0, 0, 35)
+closeButton.Position = UDim2.new(0.05, 0, 0.88, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(120, 40, 40)
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Text = "❌ CLOSE GUI"
+closeButton.Font = Enum.Font.Gotham
+closeButton.TextSize = 12
+closeButton.Parent = contentFrame
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 6)
+closeCorner.Parent = closeButton
+
+-- Insert GUI
+screenGui.Parent = game:GetService("CoreGui") or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Variables
+local localPlayer = game.Players.LocalPlayer
+local clonedCharacters = {}
+local selectedPlayer = nil
+local isMinimized = false
+
+-- Function to create character clone (FIXED - now drops in place)
+local function createCharacterClone(targetPlayer, isLocalPlayer)
+    if not targetPlayer.Character then
+        return nil
+    end
+    
+    local originalChar = targetPlayer.Character
+    local humanoidRootPart = originalChar:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        return nil
+    end
+    
+    -- Create the clone model
+    local clone = Instance.new("Model")
+    clone.Name = isLocalPlayer and "Clone_" .. localPlayer.Name or "Clone_" .. targetPlayer.Name
+    
+    -- Get spawn position (slightly offset and dropped in place)
+    local spawnCFrame = humanoidRootPart.CFrame * CFrame.new(4, 0, 0)
+    
+    -- Copy humanoid
+    local originalHumanoid = originalChar:FindFirstChildOfClass("Humanoid")
+    if originalHumanoid then
+        local humanoidClone = Instance.new("Humanoid")
+        humanoidClone.HealthDisplayType = Enum.HealthDisplayType.AlwaysOff
+        humanoidClone.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+        
+        -- Copy humanoid properties
+        humanoidClone.WalkSpeed = 0
+        humanoidClone.JumpPower = 0
+        humanoidClone.MaxHealth = originalHumanoid.MaxHealth
+        humanoidClone.Health = originalHumanoid.Health
+        humanoidClone.Parent = clone
+    end
+    
+    -- Copy all parts
+    for _, part in ipairs(originalChar:GetChildren()) do
+        if part:IsA("BasePart") then
+            local partClone = part:Clone()
+            
+            -- Make parts non-collidable and anchored so they stay in place
+            partClone.CanCollide = false
+            partClone.Anchored = true
+            
+            -- Set position relative to spawn
+            if part.Name == "HumanoidRootPart" then
+                partClone.CFrame = spawnCFrame
+            else
+                partClone.CFrame = spawnCFrame:ToWorldSpace(originalChar:GetPrimaryPartCFrame():ToObjectSpace(part.CFrame))
+            end
+            
+            partClone.Parent = clone
+        elseif part:IsA("Accoutrement") or part:IsA("CharacterMesh") then
+            local partClone = part:Clone()
+            partClone.Parent = clone
+        end
+    end
+    
+    -- Set primary part
+    local cloneRoot = clone:FindFirstChild("HumanoidRootPart")
+    if cloneRoot then
+        clone.PrimaryPart = cloneRoot
+    end
+    
+    -- Parent to workspace so everyone can see it
+    clone.Parent = workspace
+    
+    -- Force server replication by changing network ownership
+    if cloneRoot then
+        cloneRoot:SetNetworkOwner(nil)
+    end
+    
+    table.insert(clonedCharacters, clone)
+    
+    -- Clean up after 5 minutes to prevent lag
+    delay(300, function()
+        if clone and clone.Parent then
+            clone:Destroy()
+        end
+    end)
+    
+    return clone
+end
+
+-- Function to update players list
+local function updatePlayersList()
+    local playerButtons = {}
+    
+    -- Clear existing buttons
+    for _, child in ipairs(dropdownFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    -- Add players to dropdown
+    for i, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= localPlayer then
+            local playerButton = Instance.new("TextButton")
+            playerButton.Size = UDim2.new(1, 0, 0, 35)
+            playerButton.Position = UDim2.new(0, 0, 0, (#playerButtons) * 35)
+            playerButton.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+            playerButton.BorderSizePixel = 0
+            playerButton.Text = "👤 " .. player.Name
+            playerButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            playerButton.Font = Enum.Font.Gotham
+            playerButton.TextSize = 12
+            playerButton.Parent = dropdownFrame
+            
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 4)
+            btnCorner.Parent = playerButton
+            
+            playerButton.MouseButton1Click:Connect(function()
+                selectedPlayer = player
+                dropdownButton.Text = "👤 " .. player.Name
+                dropdownFrame.Visible = false
+                statusLabel.Text = "Selected: " .. player.Name .. "\nReady to copy appearance!"
+            end)
+            
+            table.insert(playerButtons, playerButton)
+        end
+    end
+    
+    -- Update canvas size
+    dropdownFrame.CanvasSize = UDim2.new(0, 0, 0, #playerButtons * 35)
+end
+
+-- Function to copy player appearance (SERVER-SIDE VISIBLE)
+local function copyPlayerAppearance(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character or not localPlayer.Character then
+        statusLabel.Text = "Error: Characters not loaded"
+        return
+    end
+    
+    local targetChar = targetPlayer.Character
+    local localChar = localPlayer.Character
+    
+    -- Wait for characters to fully load
+    if not targetChar:FindFirstChild("Humanoid") or not localChar:FindFirstChild("Humanoid") then
+        statusLabel.Text = "Error: Characters not fully loaded"
+        return
+    end
+    
+    -- Remove existing clothing/accessories from local character
+    for _, item in ipairs(localChar:GetChildren()) do
+        if item:IsA("Accoutrement") or item:IsA("Clothing") or item:IsA("CharacterMesh") then
+            item:Destroy()
+        end
+    end
+    
+    -- Copy appearance items from target player
+    for _, item in ipairs(targetChar:GetChildren()) do
+        if item:IsA("Accoutrement") or item:IsA("Clothing") or item:IsA("CharacterMesh") then
+            local clone = item:Clone()
+            clone.Parent = localChar
+            
+            -- Handle accessory attachment
+            if item:IsA("Accoutrement") and item:FindFirstChild("Handle") then
+                local handle = item.Handle
+                if handle then
+                    clone.Handle.CFrame = localChar.Head.CFrame
+                end
+            end
+        end
+    end
+    
+    -- Copy body colors
+    local targetHumanoid = targetChar:FindFirstChildOfClass("Humanoid")
+    local localHumanoid = localChar:FindFirstChildOfClass("Humanoid")
+    
+    if targetHumanoid and localHumanoid and targetHumanoid:FindFirstChild("BodyColors") then
+        local targetColors = targetHumanoid.BodyColors
+        local newColors = targetColors:Clone()
+        
+        -- Remove existing body colors
+        if localHumanoid:FindFirstChild("BodyColors") then
+            localHumanoid.BodyColors:Destroy()
+        end
+        
+        newColors.Parent = localHumanoid
+    end
+    
+    -- Force server replication by respawning (makes changes visible to others)
+    spawn(function()
+        statusLabel.Text = "Copied appearance of: " .. targetPlayer.Name .. "\nChanges should be server-side visible!"
+        
+        -- Small delay then force character update
+        wait(1)
+        if localPlayer.Character then
+            local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.Health = humanoid.Health - 0.01
+                wait(0.1)
+                humanoid.Health = humanoid.Health + 0.01
+            end
+        end
+    end)
+end
+
+-- Toggle minimize function
+local function toggleMinimize()
+    if isMinimized then
+        -- Restore
+        contentFrame.Visible = true
+        mainFrame.Size = UDim2.new(0, 320, 0, 350)
+        minimizeButton.Text = "-"
+        isMinimized = false
+    else
+        -- Minimize
+        contentFrame.Visible = false
+        mainFrame.Size = UDim2.new(0, 320, 0, 35)
+        minimizeButton.Text = "+"
+        isMinimized = true
+    end
+end
+
+-- Connect events
+cloneButton.MouseButton1Click:Connect(function()
+    if localPlayer.Character then
+        local clone = createCharacterClone(localPlayer, true)
+        if clone then
+            local pos = clone:GetPivot().Position
+            statusLabel.Text = "✅ Clone created!\nPosition: " .. math.floor(pos.X) .. ", " .. math.floor(pos.Y) .. ", " .. math.floor(pos.Z) .. "\nEveryone can see it!"
+        else
+            statusLabel.Text = "❌ Failed to create clone\nMake sure your character is loaded"
+        end
+    else
+        statusLabel.Text = "❌ Error: Your character not loaded"
+    end
+end)
+
+dropdownButton.MouseButton1Click:Connect(function()
+    updatePlayersList()
+    dropdownFrame.Visible = not dropdownFrame.Visible
+end)
+
+copyButton.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        copyPlayerAppearance(selectedPlayer)
+    else
+        statusLabel.Text = "⚠️ Please select a player first\nClick the dropdown above"
+    end
+end)
+
+minimizeButton.MouseButton1Click:Connect(toggleMinimize)
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+-- Close dropdown when clicking outside
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if dropdownFrame.Visible then
+            dropdownFrame.Visible = false
+        end
+    end
+end)
+
+-- Auto-refresh players list
+game.Players.PlayerAdded:Connect(updatePlayersList)
+game.Players.PlayerRemoving:Connect(updatePlayersList)
+
+-- Initial update
+updatePlayersList()
+
+statusLabel.Text = "✅ GUI Loaded!\n• Clone Me: Creates stationary clone\n• Copy Player: Copies appearance\n• GUI is movable and minimizable"
+
+print("🎮 Player Clone GUI loaded successfully!")
+print("✨ Features:")
+print("   • CLONE ME: Creates stationary clone that drops in place")
+print("   • COPY PLAYER: Copies player appearance (server-side visible)")
+print("   • Movable and minimizable GUI")
+print("   • Works in most Roblox games")
